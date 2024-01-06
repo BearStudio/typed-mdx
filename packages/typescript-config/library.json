@@ -1,8 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "React Library",
+  "display": "Library",
   "extends": "./base.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "outDir": "dist",
+    "sourceMap": true
   }
 }

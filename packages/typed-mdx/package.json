@@ -1,0 +1,26 @@
+{
+  "name": "@repo/typed-mdx",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "test": "echo 'Add test script here'",
+    "lint": "echo 'Add lint script here'"
+  },
+  "dependencies": {
+    "zod": "3.22.4",
+    "gray-matter": "4.0.3"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "20.10.6",
+    "tsup": "8.0.1"
+  }
+}
