@@ -73,7 +73,7 @@ async function getAll<Z extends z.Schema>({
 
   const data = await Promise.all(
     mdxFileNames.map(async (mdxFileName) => {
-      const parsedFrontmatter = parseMdxFile(
+      const parsedFrontmatter = await parseMdxFile(
         `${folderPath}/${mdxFileName}`,
         schema
       );
