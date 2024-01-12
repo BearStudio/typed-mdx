@@ -1,3 +1,4 @@
+import Link from "next/link";
 import collections from "../content/collections";
 import styles from "./page.module.css";
 
@@ -11,7 +12,9 @@ export default async function Page() {
       <ul>
         {posts.map((post) => (
           <li key={post.title}>
-            {post.title} {post.author && <>by {post.author}</>}
+            <Link href={`/blog/${post.metadata.slug}`}>
+              {post.title} {post.author && <>by {post.author}</>}
+            </Link>
           </li>
         ))}
       </ul>

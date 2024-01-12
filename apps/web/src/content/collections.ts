@@ -7,7 +7,19 @@ const collections = {
       title: z.string(),
       publishedAt: z.string().transform((str) => new Date(str)),
       tags: z.array(z.string()).optional(),
-      author: z.string().optional(),
+      author: z.string(),
+    }),
+  }),
+  author: defineCollection({
+    folder: "author",
+    schema: z.object({
+      name: z.string(),
+      socials: z.array(
+        z.object({
+          type: z.enum(["x", "linkedin"]),
+          href: z.string().url(),
+        })
+      ),
     }),
   }),
 } as const;
