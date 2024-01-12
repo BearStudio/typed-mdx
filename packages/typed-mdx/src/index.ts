@@ -7,7 +7,7 @@ export { z } from "zod";
 
 const CONTENT_FOLDER = "src/content";
 
-function assertSchemaIsObject(schema: z.Schema): asserts schema is z.ZodObject<any> {
+function assertSchemaIsObject(schema: z.Schema): asserts schema is z.AnyZodObject {
   if (!(schema instanceof z.ZodObject)) {
     throw new Error('The zod schema of a collection should be a `z.object`');
   }
@@ -27,10 +27,8 @@ function parseFrontmatter(fileContents: matter.Input) {
 
 async function parseMdxFile<Z extends z.Schema>(
   mdxPath: string,
-  schema: Z
-) {
-  assertSchemaIsObject(schema);
-
+  schema: Z,
+): Promise<z.infer<Z>> {
   const filePath = path.resolve(mdxPath);
   const frontmatter = parseFrontmatter(await fs.readFile(filePath));
 
@@ -44,16 +42,22 @@ async function parseMdxFile<Z extends z.Schema>(
     Object.entries(result.error.formErrors.fieldErrors).forEach(
       ([path, errors]) => {
         console.group(`👉 Field \`${path}\``);
-        // errors?.forEach((error) => console.error("❌", error));
+        errors?.forEach((error) => console.error("❌", error));
         console.groupEnd();
-      }
+      },
     );
     console.groupEnd();
-    return null;
+    throw new Error("---");
   }
 
   return frontmatter.data;
 }
+
+const metadataSchema = z.object({
+  metadata: z.object({
+    slug: z.string(),
+  }),
+});
 
 async function getAll<Z extends z.Schema>({
   folder,
@@ -61,34 +65,34 @@ async function getAll<Z extends z.Schema>({
 }: {
   folder: string;
   schema: Z;
-  }) {
+}): Promise<(z.infer<Z> & z.infer<typeof metadataSchema>)[]> {
   assertSchemaIsObject(schema);
 
   const folderPath = `${CONTENT_FOLDER}/${folder}`;
   const postFilePaths = await fs.readdir(path.resolve(folderPath));
 
   const mdxFileNames = postFilePaths.filter(
-    (postFilePath) => path.extname(postFilePath).toLowerCase() === ".mdx"
+    (postFilePath) => path.extname(postFilePath).toLowerCase() === ".mdx",
   );
 
   const data = await Promise.all(
     mdxFileNames.map(async (mdxFileName) => {
       const parsedFrontmatter = await parseMdxFile(
         `${folderPath}/${mdxFileName}`,
-        schema
+        schema,
       );
 
       const metadata = {
         slug: "first-entry",
       };
 
-      return { metadata, ...parsedFrontmatter } as const;
-    })
+      return { metadata, ...parsedFrontmatter };
+    }),
   );
 
   return z
-    .array(schema.extend({ metadata: z.object({ slug: z.string() }) }))
-    .parse(data.filter(Boolean));
+    .array(schema.merge(metadataSchema))
+    .parse(data.filter(Boolean)) as any; // FIX THIS
 }
 
 async function getBySlug<Z extends z.Schema>({
@@ -99,7 +103,7 @@ async function getBySlug<Z extends z.Schema>({
   folder: string;
   schema: Z;
   slug: string;
-  }) {
+}): Promise<z.infer<Z> & z.infer<typeof metadataSchema>> {
   assertSchemaIsObject(schema);
 
   const filePath = `${CONTENT_FOLDER}/${folder}/${slug}.mdx`;
@@ -121,7 +125,11 @@ export function defineCollection<Z extends z.Schema>(options: {
   folder: string;
   schema: Z;
   strict?: boolean;
-}) {
+}): {
+  getAll: () => Promise<(z.infer<Z> & z.infer<typeof metadataSchema>)[]>;
+  getBySlug: (slug: string) => Promise<z.infer<Z> & z.infer<typeof metadataSchema>>;
+  schema: Z;
+} {
   assertSchemaIsObject(options.schema);
 
   const schema =
@@ -129,8 +137,7 @@ export function defineCollection<Z extends z.Schema>(options: {
 
   return {
     getAll: () => getAll({ folder: options.folder, schema }),
-    getBySlug: (slug: string) =>
-      getBySlug({ folder: options.folder, schema, slug }),
-    schema,
+    getBySlug: (slug) => getBySlug({ folder: options.folder, schema, slug }),
+    schema: schema as Z,
   } as const;
 }
