@@ -1,5 +1,5 @@
 import Link from "next/link";
-import collections from "../content/collections";
+import collections from "@/content/collections";
 import styles from "./page.module.css";
 
 export default async function Page() {

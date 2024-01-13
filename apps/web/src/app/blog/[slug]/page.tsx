@@ -1,4 +1,4 @@
-import collections from "../../../content/collections";
+import collections from "@/content/collections";
 
 export default async function BlogPostPage({
   params,
