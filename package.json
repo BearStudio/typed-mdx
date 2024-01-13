@@ -1,5 +1,5 @@
 {
-  "name": "typed-mdx",
+  "name": "root",
   "private": true,
   "scripts": {
     "build": "turbo build",
