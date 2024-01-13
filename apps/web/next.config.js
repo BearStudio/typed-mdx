@@ -1,4 +1,4 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  transpilePackages: ["@repo/typed-mdx"],
+  transpilePackages: ["typed-mdx"],
 };

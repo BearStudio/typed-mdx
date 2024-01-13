@@ -23,9 +23,6 @@ importers:
 
   apps/docs:
     dependencies:
-      '@repo/typed-mdx':
-        specifier: workspace:*
-        version: link:../../packages/typed-mdx
       next:
         specifier: ^14.0.3
         version: 14.0.3(react-dom@18.2.0)(react@18.2.0)
@@ -35,6 +32,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      typed-mdx:
+        specifier: workspace:*
+        version: link:../../packages/typed-mdx
     devDependencies:
       '@next/eslint-plugin-next':
         specifier: ^14.0.2
@@ -66,9 +66,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@repo/typed-mdx':
-        specifier: workspace:*
-        version: link:../../packages/typed-mdx
       next:
         specifier: ^14.0.3
         version: 14.0.3(react-dom@18.2.0)(react@18.2.0)
@@ -78,6 +75,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      typed-mdx:
+        specifier: workspace:*
+        version: link:../../packages/typed-mdx
     devDependencies:
       '@next/eslint-plugin-next':
         specifier: ^14.0.2

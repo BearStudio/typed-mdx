@@ -1,4 +1,4 @@
-import { defineCollection, z } from "@repo/typed-mdx";
+import { defineCollection, z } from "typed-mdx";
 
 const collections = {
   blog: defineCollection({
