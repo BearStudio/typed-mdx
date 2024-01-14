@@ -9,7 +9,7 @@
     "dist/**"
   ],
   "scripts": {
-    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "dev": "pnpm build -- --watch",
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "test": "echo 'Add test script here'",
     "lint": "echo 'Add lint script here'"
