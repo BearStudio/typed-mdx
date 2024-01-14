@@ -3,8 +3,6 @@ import path from "node:path";
 import z from "zod";
 import matter from "gray-matter";
 
-export { z } from "zod";
-
 const CONTENT_FOLDER = "src/content";
 
 function assertSchemaIsObject(

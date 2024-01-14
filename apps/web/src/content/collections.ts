@@ -1,4 +1,5 @@
-import { defineCollection, z } from "typed-mdx";
+import { defineCollection } from "typed-mdx";
+import { z } from "zod";
 
 const collections = {
   blog: defineCollection({
