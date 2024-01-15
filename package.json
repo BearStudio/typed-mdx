@@ -1,6 +1,9 @@
 {
   "name": "root",
   "private": true,
+  "repository": {
+    "url": "https://github.com/BearStudio/typed-mdx"
+  },
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -20,5 +23,17 @@
   },
   "dependencies": {
     "@changesets/cli": "2.27.1"
-  }
+  },
+  "author": {
+    "name": "Yoann Fleury",
+    "email": "yoann.fleury@yahoo.com",
+    "url": "https://yoannfleury.dev"
+  },
+  "contributors": [
+    {
+      "name": "Ivan Dalmet",
+      "email": "ivan@dalmet.fr",
+      "url": "https://github.com/ivan-dalmet"
+    }
+  ]
 }
