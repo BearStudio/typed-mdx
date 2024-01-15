@@ -10,9 +10,9 @@ other alternative to Astro Content Collection for Next.js.
 ## Installation
 
 ```bash
-npm install typed-mdx zod
-yarn add typed-mdx zod
-pnpm add typed-mdx zod
+npm install typed-mdx zod @mdx-js/react
+yarn add typed-mdx zod @mdx-js/react
+pnpm add typed-mdx zod @mdx-js/react
 ```
 
 ## Usage
