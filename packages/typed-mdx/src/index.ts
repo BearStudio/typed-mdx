@@ -5,6 +5,10 @@ import matter from "gray-matter";
 
 const CONTENT_FOLDER = "src/content";
 
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};
+
 function assertSchemaIsObject(
   schema: z.Schema
 ): asserts schema is z.AnyZodObject {
@@ -131,10 +135,10 @@ export function defineCollection<Z extends z.Schema>(options: {
   schema: Z;
   strict?: boolean;
 }): {
-  getAll: () => Promise<(z.infer<Z> & z.infer<typeof metadataSchema>)[]>;
+  getAll: () => Promise<(Prettify<z.infer<Z> & z.infer<typeof metadataSchema>>)[]>;
   getBySlug: (
     slug: string
-  ) => Promise<z.infer<Z> & z.infer<typeof metadataSchema>>;
+  ) => Promise<Prettify<z.infer<Z> & z.infer<typeof metadataSchema>>>;
   schema: Z;
 } {
   assertSchemaIsObject(options.schema);
