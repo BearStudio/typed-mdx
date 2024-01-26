@@ -1,5 +1,12 @@
 # docs
 
+## 1.0.2
+
+### Patch Changes
+
+- Updated dependencies [f0cf162]
+  - typed-mdx@0.1.0
+
 ## 1.0.1
 
 ### Patch Changes
