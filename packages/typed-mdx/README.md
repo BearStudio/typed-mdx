@@ -10,9 +10,9 @@ other alternative to Astro Content Collection for Next.js.
 ## Installation
 
 ```bash
-npm install typed-mdx zod @next/mdx @mdx-js/loader @mdx-js/react @types/mdx
-yarn add typed-mdx zod @next/mdx @mdx-js/loader @mdx-js/react @types/mdx
-pnpm add typed-mdx zod @next/mdx @mdx-js/loader @mdx-js/react @types/mdx
+npm install typed-mdx zod @next/mdx @mdx-js/loader @mdx-js/react @types/mdx remark-frontmatter
+yarn add typed-mdx zod @next/mdx @mdx-js/loader @mdx-js/react @types/mdx remark-frontmatter
+pnpm add typed-mdx zod @next/mdx @mdx-js/loader @mdx-js/react @types/mdx remark-frontmatter
 ```
 
 ## Usage
@@ -61,5 +61,42 @@ export default async function Page() {
       ))}
     </ul>
   );
+}
+```
+
+To show the MDX content, please note that it works with the `@next/mdx` package.
+Setup the `next.config.mjs`:
+
+```mjs
+// Only support ESM so next.config.mjs
+import remarkFrontmatter from "remark-frontmatter";
+import createMDX from "@next/mdx";
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Configure `pageExtensions` to include MDX files
+  pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
+};
+
+const withMDX = createMDX({
+  options: {
+    // To remove frontmatter from rendering
+    remarkPlugins: [remarkFrontmatter],
+  },
+});
+
+export default withMDX(nextConfig);
+```
+
+If you are using the Next.js `app` router, you'll need `mdx-component.tsx` file
+at the root of your project.
+
+```tsx
+import type { MDXComponents } from "mdx/types";
+
+export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return {
+    ...components,
+  };
 }
 ```
