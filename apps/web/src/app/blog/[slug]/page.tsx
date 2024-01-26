@@ -8,9 +8,14 @@ export default async function BlogPostPage({
   const blogPost = await collections.blog.getBySlug(params.slug);
   const author = await collections.author.getBySlug(blogPost.author);
 
+  const Content = (await import(`@/content/${blogPost.metadata.filePath}`))
+    .default;
+
   return (
-    <>
-      {blogPost.title} by {author.name}
-    </>
+    <article>
+      <h2>{blogPost.title}</h2>
+      <small>by {author.name}</small>
+      <Content />
+    </article>
   );
 }

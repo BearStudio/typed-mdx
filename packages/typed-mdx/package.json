@@ -1,6 +1,7 @@
 {
   "name": "typed-mdx",
   "version": "0.0.1",
+  "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -8,14 +9,14 @@
     "dist/**"
   ],
   "scripts": {
-    "dev": "pnpm build -- --watch",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "test": "echo 'Add test script here'",
     "lint": "echo 'Add lint script here'"
   },
   "dependencies": {
-    "zod": "3.22.4",
-    "gray-matter": "4.0.3"
+    "gray-matter": "4.0.3",
+    "zod": "3.22.4"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

@@ -60,6 +60,7 @@ async function parseMdxFile<Z extends z.Schema>(
 const metadataSchema = z.object({
   metadata: z.object({
     slug: z.string(),
+    filePath: z.string(),
   }),
 });
 
@@ -88,11 +89,13 @@ async function getAll<Z extends z.Schema>({
         schema
       );
 
+      const slug = mdxFileName.substring(
+        0,
+        mdxFileName.length - MDX_ENTENSION.length
+      );
       const metadata = {
-        slug: mdxFileName.substring(
-          0,
-          mdxFileName.length - MDX_ENTENSION.length
-        ),
+        slug,
+        filePath: `${folder}/${slug}.mdx`,
       };
 
       return { metadata, ...parsedFrontmatter };
@@ -101,7 +104,7 @@ async function getAll<Z extends z.Schema>({
 
   return z
     .array(schema.merge(metadataSchema))
-    .parse(data.filter(Boolean)) as any; // FIX THIS
+    .parse(data.filter(Boolean)) as any; // TODO FIX THIS ANY
 }
 
 async function getBySlug<Z extends z.Schema>({
@@ -115,7 +118,7 @@ async function getBySlug<Z extends z.Schema>({
 }): Promise<z.infer<Z> & z.infer<typeof metadataSchema>> {
   assertSchemaIsObject(schema);
 
-  const filePath = `${CONTENT_FOLDER}/${folder}/${slug}.mdx`;
+  const filePath = `${CONTENT_FOLDER}/${folder}/${slug}.mdx` as const;
 
   try {
     await fs.stat(path.resolve(filePath));
@@ -123,11 +126,16 @@ async function getBySlug<Z extends z.Schema>({
     throw new Error(`File ${filePath} not found`);
   }
 
-  const data = await parseMdxFile(filePath, schema);
+  const parsedFrontmatter = await parseMdxFile(filePath, schema);
 
-  // Trick to make zod infer the schema, else it doesn't infer if we do not put
-  // the z.object({}) before. Maybe the generic is not small enough ?
-  return schema.parse(data);
+  const metadata = {
+    slug,
+    filePath: `${folder}/${slug}.mdx`,
+  };
+
+  const data = { metadata, ...parsedFrontmatter };
+
+  return schema.merge(metadataSchema).parse(data) as any; // TODO FIX THIS ANY
 }
 
 export function defineCollection<Z extends z.Schema>(options: {
