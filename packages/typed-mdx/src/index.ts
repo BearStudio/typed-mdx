@@ -2,7 +2,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import z from "zod";
 import matter from "gray-matter";
-import { compile } from "@mdx-js/mdx";
 
 const CONTENT_FOLDER = "src/content";
 
@@ -54,28 +53,11 @@ async function parseMdxFile<Z extends z.Schema>(
   return frontmatter.data;
 }
 
-async function getMDXContent({ path }: { path: string }) {
-  try {
-    const fileContent = await fs.readFile(path);
-    const mdxContent = await compile(fileContent, {
-      outputFormat: "function-body",
-    });
-
-    return {
-      raw: fileContent.toString(),
-      code: mdxContent.toString(),
-    };
-  } catch {
-    console.error(`Can't read file ${path}`);
-    return {};
-  }
-}
-
 const metadataSchema = z.object({
   metadata: z.object({
     slug: z.string(),
+    filePath: z.string(),
   }),
-  body: z.object({ raw: z.string(), code: z.string() }),
 });
 
 const MDX_ENTENSION = ".mdx";
@@ -103,18 +85,16 @@ async function getAll<Z extends z.Schema>({
         schema
       );
 
-      const body = await getMDXContent({
-        path: path.resolve(folderPath, mdxFileName),
-      });
-
+      const slug = mdxFileName.substring(
+        0,
+        mdxFileName.length - MDX_ENTENSION.length
+      );
       const metadata = {
-        slug: mdxFileName.substring(
-          0,
-          mdxFileName.length - MDX_ENTENSION.length
-        ),
+        slug,
+        filePath: `${folder}/${slug}.mdx`,
       };
 
-      return { metadata, body, ...parsedFrontmatter };
+      return { metadata, ...parsedFrontmatter };
     })
   );
 
@@ -134,7 +114,7 @@ async function getBySlug<Z extends z.Schema>({
 }): Promise<z.infer<Z> & z.infer<typeof metadataSchema>> {
   assertSchemaIsObject(schema);
 
-  const filePath = `${CONTENT_FOLDER}/${folder}/${slug}.mdx`;
+  const filePath = `${CONTENT_FOLDER}/${folder}/${slug}.mdx` as const;
 
   try {
     await fs.stat(path.resolve(filePath));
@@ -144,15 +124,12 @@ async function getBySlug<Z extends z.Schema>({
 
   const parsedFrontmatter = await parseMdxFile(filePath, schema);
 
-  const body = await getMDXContent({
-    path: path.resolve(filePath),
-  });
-
   const metadata = {
     slug,
+    filePath: `${folder}/${slug}.mdx`,
   };
 
-  const data = { metadata, body, ...parsedFrontmatter };
+  const data = { metadata, ...parsedFrontmatter };
 
   return schema.merge(metadataSchema).parse(data) as any; // TODO FIX THIS ANY
 }

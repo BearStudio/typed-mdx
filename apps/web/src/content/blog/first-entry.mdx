@@ -4,4 +4,14 @@ publishedAt: 2024-01-06T05:50:17+0000
 author: yoann
 ---
 
+import { DemoOutside } from '@/components/DemoOutside';
+
+export const DemoInside = () => {
+  return <div>This is the inside demo component with some compute: {1+1}</div>;
+};
+
 This is my first blog post.
+
+
+<DemoInside />
+<DemoOutside />

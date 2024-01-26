@@ -1,4 +1,3 @@
-import { Renderer } from "@/app/blog/[slug]/renderer";
 import collections from "@/content/collections";
 
 export default async function BlogPostPage({
@@ -9,11 +8,14 @@ export default async function BlogPostPage({
   const blogPost = await collections.blog.getBySlug(params.slug);
   const author = await collections.author.getBySlug(blogPost.author);
 
+  const Content = (await import(`@/content/${blogPost.metadata.filePath}`))
+    .default;
+
   return (
     <article>
       <h2>{blogPost.title}</h2>
       <small>by {author.name}</small>
-      <Renderer code={blogPost.body.code} />
+      <Content />
     </article>
   );
 }
