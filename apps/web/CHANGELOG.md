@@ -1,5 +1,12 @@
 # web
 
+## 1.0.4
+
+### Patch Changes
+
+- Updated dependencies [f78fbfb]
+  - typed-mdx@0.1.2
+
 ## 1.0.3
 
 ### Patch Changes

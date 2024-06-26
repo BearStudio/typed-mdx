@@ -1,5 +1,11 @@
 # typed-mdx
 
+## 0.1.2
+
+### Patch Changes
+
+- f78fbfb: improve file and directory detection
+
 ## 0.1.1
 
 ### Patch Changes
