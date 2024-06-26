@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import z from "zod";
 import matter from "gray-matter";
+import { Result } from "@swan-io/boxed";
 import { isDirectory, isFile } from "./utils.js";
 
 const CONTENT_FOLDER = "src/content";
@@ -19,14 +20,16 @@ function assertSchemaIsObject(
 }
 
 /** Method to get the frontmatter as a JavaScript object */
-function parseFrontmatter(fileContents: matter.Input) {
+function parseFrontmatter(
+  fileContents: matter.Input
+): Result<matter.GrayMatterFile<string | Buffer>, string> {
   try {
     // `matter` is empty string on cache results
     // clear cache to prevent this
     (matter as any).clearCache();
-    return matter(fileContents);
+    return Result.Ok(matter(fileContents));
   } catch (e) {
-    throw e;
+    return Result.Error("Unable to parse the frontmatter");
   }
 }
 
@@ -35,9 +38,15 @@ async function parseMdxFile<Z extends z.Schema>(
   schema: Z
 ): Promise<z.infer<Z>> {
   const filePath = path.resolve(mdxPath);
-  const frontmatter = parseFrontmatter(await fs.readFile(filePath));
+  const frontmatterResult = parseFrontmatter(await fs.readFile(filePath));
 
-  const result = schema.safeParse(frontmatter.data);
+  if (frontmatterResult.isError()) {
+    throw new Error(frontmatterResult.error);
+  }
+
+  const frontmatter = frontmatterResult.get().data;
+
+  const result = schema.safeParse(frontmatter);
 
   if (!result.success) {
     console.group(`Errors in ${mdxPath}`);
@@ -55,7 +64,7 @@ async function parseMdxFile<Z extends z.Schema>(
     throw new Error("---");
   }
 
-  return frontmatter.data;
+  return frontmatter;
 }
 
 const metadataSchema = z.object({
