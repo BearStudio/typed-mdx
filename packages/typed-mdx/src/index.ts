@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import z from "zod";
 import matter from "gray-matter";
+import { isDirectory, isFile } from "./utils.js";
 
 const CONTENT_FOLDER = "src/content";
 
@@ -76,6 +77,13 @@ async function getAll<Z extends z.Schema>({
   assertSchemaIsObject(schema);
 
   const folderPath = `${CONTENT_FOLDER}/${folder}`;
+
+  if (!(await isDirectory(folderPath)).valueOf()) {
+    throw new Error(
+      `💥 Folder ${folderPath} does not exist or is not a directory`
+    );
+  }
+
   const postFilePaths = await fs.readdir(path.resolve(folderPath));
 
   const mdxFileNames = postFilePaths.filter(
@@ -120,10 +128,8 @@ async function getBySlug<Z extends z.Schema>({
 
   const filePath = `${CONTENT_FOLDER}/${folder}/${slug}.mdx` as const;
 
-  try {
-    await fs.stat(path.resolve(filePath));
-  } catch {
-    throw new Error(`File ${filePath} not found`);
+  if (!(await isFile(filePath)).valueOf()) {
+    throw new Error(`💥 File ${filePath} does not exist or is not a file`);
   }
 
   const parsedFrontmatter = await parseMdxFile(filePath, schema);
@@ -143,7 +149,9 @@ export function defineCollection<Z extends z.Schema>(options: {
   schema: Z;
   strict?: boolean;
 }): {
-  getAll: () => Promise<(Prettify<z.infer<Z> & z.infer<typeof metadataSchema>>)[]>;
+  getAll: () => Promise<
+    Prettify<z.infer<Z> & z.infer<typeof metadataSchema>>[]
+  >;
   getBySlug: (
     slug: string
   ) => Promise<Prettify<z.infer<Z> & z.infer<typeof metadataSchema>>>;
