@@ -169,8 +169,7 @@ async function getBySlug<Z extends z.Schema>({
 
   const body = await stringifyMDX(filePath);
 
-  const data = { metadata, body, ...parsedFrontmatter };
-  return schema.merge(metadataSchema).merge(bodySchema).parse(data) as any; // TODO FIX THIS ANY
+  return { metadata, body, data: parsedFrontmatter } as any; // TODO FIX THIS ANY
 }
 
 export function defineCollection<Z extends z.Schema>(options: {
