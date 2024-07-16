@@ -10,7 +10,6 @@ export default async function BlogPostPage({
 
   const Content = (await import(`@/content/${blogPost.metadata.filePath}`))
     .default;
-  console.log(blogPost.body);
   return (
     <article>
       <h2>{blogPost.title}</h2>
