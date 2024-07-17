@@ -11,9 +11,9 @@ export default async function Page() {
 
       <ul>
         {posts.map((post) => (
-          <li key={post.title}>
+          <li key={post.data.title}>
             <Link href={`/blog/${post.metadata.slug}`}>
-              {post.title} {post.author && <>by {post.author}</>}
+              {post.data.title} {post.data.author && <>by {post.data.author}</>}
             </Link>
           </li>
         ))}
